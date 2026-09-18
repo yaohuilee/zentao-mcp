@@ -3,10 +3,31 @@ package mcp
 import (
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/google/jsonschema-go/jsonschema"
 )
+
+func TestProgramTreePaginationDescription(t *testing.T) {
+	raw, err := os.ReadFile("../../../docs/zentao-openapi.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	op := doc["paths"].(map[string]any)["/programs"].(map[string]any)["get"].(map[string]any)
+	// 工具构建优先使用 summary，关键分页说明必须出现在实际暴露的描述中。
+	for _, key := range []string{"summary", "description"} {
+		for _, term := range []string{"顶层分支", "pageTotal", "bysearch", "父节点"} {
+			if !strings.Contains(op[key].(string), term) {
+				t.Fatalf("%s 缺少 %s", key, term)
+			}
+		}
+	}
+}
 
 func TestProjectManagerSchema(t *testing.T) {
 	raw, err := os.ReadFile("../../../docs/zentao-openapi.json")

@@ -1090,8 +1090,8 @@
                 "tags": [
                     "Program"
                 ],
-                "summary": "获取项目集列表",
-                "description": "",
+                "summary": "获取项目集列表。按顶层分支分页返回项目集与项目节点，仍受权限限制。状态筛选匹配各层节点，不因父节点状态不同而遗漏子节点；结果不保证包含不匹配的祖先。pager.recTotal 为包含匹配节点的顶层分支总数，recPerPage 为每页分支数，返回节点数可能更多。请按 pageTotal 翻页，不按返回节点数判断结束。bysearch 为保存搜索，沿用搜索结果自身分页。",
+                "description": "按顶层分支分页返回项目集与项目节点，仍受权限限制。状态筛选匹配各层节点，不因父节点状态不同而遗漏子节点；结果不保证包含不匹配的祖先。pager.recTotal 为包含匹配节点的顶层分支总数，recPerPage 为每页分支数，返回节点数可能更多。请按 pageTotal 翻页，不按返回节点数判断结束。bysearch 为保存搜索，沿用搜索结果自身分页。",
                 "responses": {
                     "200": {
                         "description": "Success response",
@@ -1521,7 +1521,7 @@
                     {
                         "name": "browseType",
                         "in": "query",
-                        "description": "默认 all。all 全部（仍受权限及视图设置约束）；doing 进行中；wait 未开始；closed 已关闭；需要完整历史数据请显式传 all。",
+                        "description": "默认 all；all 返回各状态节点，含已关闭；unclosed 未关闭；doing 进行中；wait 未开始；suspended 已挂起；closed 已关闭；delayed 已延期；bysearch 保存搜索。API 状态筛选不受 showClosed Cookie 影响，始终保留权限检查。查询全部可见项目请使用 get_projects 并传 all，不以本树形列表替代。",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1539,7 +1539,7 @@
                     {
                         "name": "recPerPage",
                         "in": "query",
-                        "description": "每页数量，不超过1000",
+                        "description": "每页顶层分支数，不超过1000；附带分支内匹配节点，实际节点数可超过此值。bysearch 按搜索结果分页。",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1548,7 +1548,7 @@
                     {
                         "name": "pageID",
                         "in": "query",
-                        "description": "页码，从第1页开始",
+                        "description": "页码，从1开始；按 pager.pageTotal 翻页，不用节点条数与 recPerPage 比较判断结束。",
                         "required": false,
                         "schema": {
                             "type": "string"
