@@ -115,6 +115,10 @@ func (c *Controller) toolHandler(td *models.ToolDefinition) func(context.Context
 					text = string(minified)
 				}
 			}
+		} else if !isError && len(td.OutputSchema) > 0 && status != 204 && status != 205 {
+			// 已声明 JSON 输出的接口不得把空正文或非法 JSON 当作成功。
+			isError = true
+			text = `{"status":"fail","message":"上游接口未返回有效 JSON 数据。"}`
 		}
 
 		res := &mcpsdk.CallToolResult{

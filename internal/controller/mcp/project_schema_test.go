@@ -60,4 +60,24 @@ func TestProjectManagerSchema(t *testing.T) {
 			t.Fatalf("missing filter in %s", path)
 		}
 	}
+	product := at(doc, "paths", "/products", "get", "responses", "200", "content", "application/json", "schema", "properties", "products", "items")
+	productJSON, _ := json.Marshal(product)
+	var productSchema jsonschema.Schema
+	if err = json.Unmarshal(productJSON, &productSchema); err != nil {
+		t.Fatal(err)
+	}
+	productResolved, err := productSchema.Resolve(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rates := map[string]any{"storyCompleteRate": 12.25, "requirementCompleteRate": 33.33, "bugFixedRate": 99.99}
+	output := normalizeStructuredOutput(productJSON, rates)
+	if err = productResolved.Validate(output); err != nil {
+		t.Fatal(err)
+	}
+	for key, value := range rates {
+		if output.(map[string]any)[key] != value {
+			t.Fatal("rate precision changed")
+		}
+	}
 }
