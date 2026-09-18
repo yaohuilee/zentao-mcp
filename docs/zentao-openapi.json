@@ -13161,8 +13161,8 @@
                 "tags": [
                     "Bug"
                 ],
-                "summary": "获取产品Bug列表",
-                "description": "",
+                "summary": "获取产品 Bug 列表。仅查询指定产品及当前身份可见项目、执行范围内的 Bug。普通产品列表并非全局 Bug 的完整枚举入口，可能不含影子产品或不可见产品。unresolved 表示未解决（active）；unclosed 表示未关闭（active、resolved），二者不可混用。此接口不是全局按人查询，未暴露 assignedTo 参数。",
+                "description": "仅查询指定产品及当前身份可见项目、执行范围内的 Bug。普通产品列表并非全局 Bug 的完整枚举入口，可能不含影子产品或不可见产品。unresolved 表示未解决（active）；unclosed 表示未关闭（active、resolved），二者不可混用。此接口不是全局按人查询，未暴露 assignedTo 参数。",
                 "responses": {
                     "200": {
                         "description": "Success response",
@@ -13548,7 +13548,7 @@
                     {
                         "name": "browseType",
                         "in": "query",
-                        "description": "状态，默认是unclosed。(all 全部 | unclosed 未关闭 | assignedtome 指派给我 | openedbyme 我创建 | assignedbyme 由我指派)",
+                        "description": "默认 all。all 全部；unresolved 未解决（active）；unclosed 未关闭（active、resolved）；assignedtome 指派给当前鉴权用户（兼容 assigntome）；openedbyme 我创建；assignedbyme 由我指派；resolvedbyme 我解决。人员筛选不等同于仅未解决，待办口径需再核对 status。",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -13589,8 +13589,8 @@
                 "tags": [
                     "Bug"
                 ],
-                "summary": "获取项目Bug列表",
-                "description": "",
+                "summary": "获取项目 Bug 列表。仅查询指定项目归属的 Bug，不能覆盖未关联项目的记录；项目与产品的可见范围不同，不能用两个入口条数直接判断漏数。unresolved 表示未解决（active）；unclosed 表示未关闭（active、resolved），二者不可混用。此接口不是全局按人查询，未暴露 assignedTo 参数。",
+                "description": "仅查询指定项目归属的 Bug，不能覆盖未关联项目的记录；项目与产品的可见范围不同，不能用两个入口条数直接判断漏数。unresolved 表示未解决（active）；unclosed 表示未关闭（active、resolved），二者不可混用。此接口不是全局按人查询，未暴露 assignedTo 参数。",
                 "responses": {
                     "200": {
                         "description": "Success response",
@@ -13961,7 +13961,7 @@
                     {
                         "name": "browseType",
                         "in": "query",
-                        "description": "状态，默认是all。(all 全部 | unresolved 未关闭)",
+                        "description": "默认 all。all 全部；unresolved 未解决（active）；unclosed 未关闭（active、resolved）；assignedtome 指派给当前鉴权用户（兼容 assigntome）；openedbyme 我创建；assignedbyme 由我指派；resolvedbyme 我解决。人员筛选不等同于仅未解决，待办口径需再核对 status。",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -14002,8 +14002,8 @@
                 "tags": [
                     "Bug"
                 ],
-                "summary": "获取执行Bug列表",
-                "description": "",
+                "summary": "获取执行 Bug 列表。仅查询指定执行归属的 Bug，不能覆盖未关联执行的记录；执行与产品的可见范围不同，不能用两个入口条数直接判断漏数。unresolved 表示未解决（active）；unclosed 表示未关闭（active、resolved），二者不可混用。此接口不是全局按人查询，未暴露 assignedTo 参数。",
+                "description": "仅查询指定执行归属的 Bug，不能覆盖未关联执行的记录；执行与产品的可见范围不同，不能用两个入口条数直接判断漏数。unresolved 表示未解决（active）；unclosed 表示未关闭（active、resolved），二者不可混用。此接口不是全局按人查询，未暴露 assignedTo 参数。",
                 "responses": {
                     "200": {
                         "description": "Success response",
@@ -14389,7 +14389,7 @@
                     {
                         "name": "browseType",
                         "in": "query",
-                        "description": "状态，默认是all。(all 全部 | unresolved 未关闭)",
+                        "description": "默认 all。all 全部；unresolved 未解决（active）；unclosed 未关闭（active、resolved）；assignedtome 指派给当前鉴权用户（兼容 assigntome）；openedbyme 我创建；assignedbyme 由我指派；resolvedbyme 我解决。人员筛选不等同于仅未解决，待办口径需再核对 status。",
                         "required": false,
                         "schema": {
                             "type": "string"

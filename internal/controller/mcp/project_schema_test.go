@@ -29,6 +29,35 @@ func TestProgramTreePaginationDescription(t *testing.T) {
 	}
 }
 
+func TestBugListScopeDescription(t *testing.T) {
+	raw, err := os.ReadFile("../../../docs/zentao-openapi.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	for _, route := range []string{"/products/:productID/bugs", "/projects/:projectID/bugs", "/executions/:executionID/bugs"} {
+		op := doc["paths"].(map[string]any)[route].(map[string]any)["get"].(map[string]any)
+		for _, term := range []string{"未解决（active）", "未关闭（active、resolved）", "不是全局"} {
+			if !strings.Contains(op["summary"].(string), term) {
+				t.Fatalf("%s 缺少 %s", route, term)
+			}
+		}
+		found := false
+		for _, value := range op["parameters"].([]any) {
+			param := value.(map[string]any)
+			if param["name"] == "browseType" {
+				found = strings.Contains(param["description"].(string), "兼容 assigntome") && strings.Contains(param["description"].(string), "默认 all")
+			}
+		}
+		if !found {
+			t.Fatalf("%s 缺少人员筛选别名说明", route)
+		}
+	}
+}
+
 func TestProjectManagerSchema(t *testing.T) {
 	raw, err := os.ReadFile("../../../docs/zentao-openapi.json")
 	if err != nil {
