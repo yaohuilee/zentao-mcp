@@ -1495,7 +1495,14 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "all 全部 | unclosed 未关闭 | wait 未开始 | doing 进行中 | suspended 已挂起 | delayed 已延期 | closed 已关闭",
+                        "description": "兼容别名，映射到 browseType；同时传入时 browseType 优先。",
+                        "required": false,
+                        "schema": {"type": "string"}
+                    },
+                    {
+                        "name": "browseType",
+                        "in": "query",
+                        "description": "项目集筛选：all 全部 | unclosed 未关闭（默认） | wait 未开始 | doing 进行中 | suspended 已挂起 | delayed 已延期 | closed 已关闭。仍受上游权限和视图设置约束。",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -3896,7 +3903,7 @@
                                                         "description": "项目负责人"
                                                     },
                                                     "PM": {
-                                                        "type": "boolean",
+                                                        "anyOf": [{"type": "string"}, {"type": "boolean"}],
                                                         "description": "负责人"
                                                     },
                                                     "QD": {
@@ -4007,15 +4014,15 @@
                                                         "description": "剩余"
                                                     },
                                                     "invested": {
-                                                        "type": "integer",
+                                                        "type": "number",
                                                         "description": "已投入",
-                                                        "format": "int32"
+                                                        "format": "double"
                                                     },
                                                     "PMAvatar": {
-                                                        "type": "boolean"
+                                                        "anyOf": [{"type": "string"}, {"type": "boolean"}]
                                                     },
                                                     "PMUserID": {
-                                                        "type": "boolean"
+                                                        "anyOf": [{"type": "integer"}, {"type": "boolean"}]
                                                     },
                                                     "storyCount": {
                                                         "type": "integer",
@@ -5451,7 +5458,14 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "执行状态，默认是undone。(all 全部 | undone 未完成 | wait 未开始 | doing 进行中)",
+                        "description": "兼容别名，映射到 browseType；同时传入时 browseType 优先。",
+                        "required": false,
+                        "schema": {"type": "string"}
+                    },
+                    {
+                        "name": "browseType",
+                        "in": "query",
+                        "description": "执行筛选：all 全部 | undone 未完成（默认） | wait 未开始 | doing 进行中 | closed 已关闭。",
                         "required": false,
                         "schema": {
                             "type": "string"

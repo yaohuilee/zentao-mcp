@@ -94,9 +94,15 @@ func (c *Controller) toolHandler(td *models.ToolDefinition) func(context.Context
 		text := string(body)
 
 		var data any
+		isError := status < 200 || status >= 300
 
 		if err := json.Unmarshal(body, &data); err == nil {
-			if td.WrapOutput && status >= 200 && status < 300 {
+			if envelope, ok := data.(map[string]any); ok {
+				if state, ok := envelope["status"].(string); ok && state == "fail" {
+					isError = true
+				}
+			}
+			if td.WrapOutput && !isError {
 				data = map[string]any{"result": data}
 			}
 
@@ -112,6 +118,7 @@ func (c *Controller) toolHandler(td *models.ToolDefinition) func(context.Context
 		}
 
 		res := &mcpsdk.CallToolResult{
+			IsError: isError,
 			Content: []mcpsdk.Content{
 				&mcpsdk.TextContent{Text: fmt.Sprintf("HTTP %d", status)},
 				&mcpsdk.TextContent{Text: text},
@@ -119,7 +126,7 @@ func (c *Controller) toolHandler(td *models.ToolDefinition) func(context.Context
 		}
 
 		var structuredOutput any
-		if len(td.OutputSchema) > 0 && status >= 200 && status < 300 && data != nil {
+		if len(td.OutputSchema) > 0 && !isError && data != nil {
 			structuredOutput = normalizeStructuredOutput(td.OutputSchema, data)
 		}
 

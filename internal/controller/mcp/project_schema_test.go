@@ -1,0 +1,63 @@
+package mcp
+
+import (
+	"encoding/json"
+	"os"
+	"testing"
+
+	"github.com/google/jsonschema-go/jsonschema"
+)
+
+func TestProjectManagerSchema(t *testing.T) {
+	raw, err := os.ReadFile("../../../docs/zentao-openapi.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc map[string]any
+	if err = json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	at := func(value any, keys ...string) any {
+		for _, key := range keys {
+			value = value.(map[string]any)[key]
+		}
+		return value
+	}
+	project := at(doc, "paths", "/projects", "get", "responses", "200", "content", "application/json", "schema", "properties", "projects", "items")
+	schemaJSON, _ := json.Marshal(project)
+	var schema jsonschema.Schema
+	if err = json.Unmarshal(schemaJSON, &schema); err != nil {
+		t.Fatal(err)
+	}
+	resolved, err := schema.Resolve(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, row := range []map[string]any{
+		{"PM": "Manager", "PMAvatar": "", "PMUserID": "46", "invested": 1.25},
+		{"PM": "Manager", "PMAvatar": "/avatar.png", "PMUserID": 46},
+		{"PM": "", "PMAvatar": "", "PMUserID": 0},
+		{"PM": false, "PMAvatar": false, "PMUserID": false},
+	} {
+		normalized := normalizeStructuredOutput(schemaJSON, row)
+		if err = resolved.Validate(normalized); err != nil {
+			t.Fatal(err)
+		}
+		if normalized.(map[string]any)["PM"] != row["PM"] {
+			t.Fatal("manager value changed")
+		}
+		if normalized.(map[string]any)["invested"] != row["invested"] {
+			t.Fatal("fractional work amount changed")
+		}
+	}
+	for _, path := range []string{"/programs", "/executions"} {
+		params := at(doc, "paths", path, "get", "parameters").([]any)
+		found := map[string]bool{}
+		for _, p := range params {
+			found[p.(map[string]any)["name"].(string)] = true
+		}
+		if !found["status"] || !found["browseType"] {
+			t.Fatalf("missing filter in %s", path)
+		}
+	}
+}
